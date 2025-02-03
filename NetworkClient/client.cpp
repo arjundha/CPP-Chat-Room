@@ -8,7 +8,7 @@ enum class CustomMessage : uint32_t {
 };
 
 int main() {
-	message<CustomMessage> message;
+	Message<CustomMessage> message;
 	message.header.id = CustomMessage::Say;
 
 	//int a = 1;

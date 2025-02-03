@@ -19,9 +19,9 @@ struct message {
 	}
 
 	// std::cout override
-	friend std::ostream& operator << (std::ostream& os, const message<T>& msg)
+	friend std::ostream& operator << (std::ostream& os, const message<T>& message)
 	{
-		os << "Message ID:" << int(msg.header.id) << " Size:" << msg.header.size;
+		os << "Message ID:" << int(message.header.id) << " Size:" << message.header.size;
 		return os;
 	}
 
@@ -29,36 +29,36 @@ struct message {
 
 	// Push new data into a message
 	template<typename DataType>
-	friend message<T>& operator << (message<T>& msg, const DataType& data)
+	friend message<T>& operator << (message<T>& mmessagesg, const DataType& data)
 	{
 		static_assert(std::is_standard_layout<DataType>::value, "Cannot push data into message vector, type is too complex");
 
-		size_t size = msg.body.size(); // current size
+		size_t size = message.body.size(); // current size
 
-		msg.body.resize(msg.body.size() + sizeof(DataType)); // resize for new data
+		message.body.resize(message.body.size() + sizeof(DataType)); // resize for new data
 
-		std::memcpy(msg.body.data() + size, &data, sizeof(DataType)); // copy new data starting at end of old data
+		std::memcpy(message.body.data() + size, &data, sizeof(DataType)); // copy new data starting at end of old data
 
-		msg.header.size = msg.size(); // now update the size in the header
+		message.header.size = message.size(); // now update the size in the header
 
-		return msg;
+		return message;
 	}
 
 	// Pull data out of a message
 	template<typename DataType>
-	friend message<T>& operator >> (message<T>& msg, DataType& data)
+	friend message<T>& operator >> (message<T>& message, DataType& data)
 	{
 		static_assert(std::is_standard_layout<DataType>::value, "Cannot pull data into message vector, type is too complex");
 
-		size_t size = msg.body.size() - sizeof(DataType); // Size of data to be pulled out
+		size_t size = message.body.size() - sizeof(DataType); // Size of data to be pulled out
 
-		std::memcpy(&data, msg.body.data() + size, sizeof(DataType)); // Copy the data out of message and into "data" var
+		std::memcpy(&data, message.body.data() + size, sizeof(DataType)); // Copy the data out of message and into "data" var
 
 		// Update sizes
-		msg.body.resize(size);
-		msg.header.size = msg.size();
+		message.body.resize(size);
+		message.header.size = message.size();
 
-		return msg;
+		return message;
 	}
 
 };

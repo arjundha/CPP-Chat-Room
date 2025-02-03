@@ -7,6 +7,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CPPChatRoom", "CPPChatRoom\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkCommon", "NetworkCommon\NetworkCommon.vcxproj", "{55CC0A71-1509-4FAA-AD28-13247CAE650B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkClient", "NetworkClient\NetworkClient.vcxproj", "{799DB866-B95A-4EA8-8795-CF266FC8F06E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{55CC0A71-1509-4FAA-AD28-13247CAE650B} = {55CC0A71-1509-4FAA-AD28-13247CAE650B}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +36,14 @@ Global
 		{55CC0A71-1509-4FAA-AD28-13247CAE650B}.Release|x64.Build.0 = Release|x64
 		{55CC0A71-1509-4FAA-AD28-13247CAE650B}.Release|x86.ActiveCfg = Release|Win32
 		{55CC0A71-1509-4FAA-AD28-13247CAE650B}.Release|x86.Build.0 = Release|Win32
+		{799DB866-B95A-4EA8-8795-CF266FC8F06E}.Debug|x64.ActiveCfg = Debug|x64
+		{799DB866-B95A-4EA8-8795-CF266FC8F06E}.Debug|x64.Build.0 = Debug|x64
+		{799DB866-B95A-4EA8-8795-CF266FC8F06E}.Debug|x86.ActiveCfg = Debug|Win32
+		{799DB866-B95A-4EA8-8795-CF266FC8F06E}.Debug|x86.Build.0 = Debug|Win32
+		{799DB866-B95A-4EA8-8795-CF266FC8F06E}.Release|x64.ActiveCfg = Release|x64
+		{799DB866-B95A-4EA8-8795-CF266FC8F06E}.Release|x64.Build.0 = Release|x64
+		{799DB866-B95A-4EA8-8795-CF266FC8F06E}.Release|x86.ActiveCfg = Release|Win32
+		{799DB866-B95A-4EA8-8795-CF266FC8F06E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

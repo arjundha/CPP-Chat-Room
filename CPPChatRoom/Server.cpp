@@ -12,7 +12,7 @@
 
 std::vector<char> vBuffer(20 * 1024);
 
-void grabSomeData(asio::ip::tcp::socket &socket) {
+void grabSomeData(asio::ip::tcp::socket& socket) {
 	socket.async_read_some(asio::buffer(vBuffer.data(), vBuffer.size()),
 		[&](std::error_code error, std::size_t length) {
 			if (!error) {
@@ -31,7 +31,7 @@ int main() {
 
 	asio::io_context context; // Interface for the platform -- unique instance
 	asio::io_context::work idleWork(context); // Keep the context busy
-	std::thread threaded_context = std::thread([&]() {context.run();}); // run the context in its own thread
+	std::thread threaded_context = std::thread([&]() {context.run(); }); // run the context in its own thread
 
 	asio::ip::tcp::endpoint endpoint(asio::ip::make_address("93.184.216.34", error), 80); // Endpoint specified at specific IP address
 
@@ -42,7 +42,7 @@ int main() {
 		std::cout << "Error: " << error.message() << std::endl;
 	}
 	else {
-		std::cout << "Socket connected successfully."<< std::endl;
+		std::cout << "Socket connected successfully." << std::endl;
 	}
 
 	if (socket.is_open()) {
@@ -64,7 +64,7 @@ int main() {
 		if (threaded_context.joinable()) {
 			threaded_context.join();
 		}
-		
+
 	}
 
 	return 0;

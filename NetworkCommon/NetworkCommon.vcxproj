@@ -20,8 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network.h" />
+    <ClInclude Include="networkClient.h" />
     <ClInclude Include="networkCommon.h" />
+    <ClInclude Include="networkConnection.h" />
     <ClInclude Include="networkMessage.h" />
+    <ClInclude Include="networkServer.h" />
     <ClInclude Include="networkThreadSafeQueue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

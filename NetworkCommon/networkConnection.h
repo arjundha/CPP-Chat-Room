@@ -15,11 +15,19 @@ public:
 
 	}
 
-	bool connectToServer(); // called by clients
-	bool disconnect(); // called by clients or server
-	bool isConnected() const;
+	bool connectToServer() { // called by clients 
+		return false;
+	}
+	bool disconnect() { // called by clients or server 
+		return false;
+	}
+	bool isConnected() const {
+		return false;
+	}
 
-	bool send(const message<T>& message);
+	bool send(const message<T>& message) {
+		return false;
+	}
 
 protected:
 	// ASIO stuff in here

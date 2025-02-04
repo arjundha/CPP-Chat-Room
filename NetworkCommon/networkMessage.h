@@ -66,6 +66,9 @@ struct Message {
 template <typename T>
 class Connection;
 
+/*
+* These messages are associated with a connection.
+*/
 template <typename T>
 struct OwnedMessage {
 	std::shared_ptr<Connection<T>> remote = nullptr;

@@ -19,15 +19,19 @@ public:
 	// Try to connect to a given host with port
 	bool connect(const std::string& host, const uint16_t port) {
 		try {
-			// Connect in here
-			m_connection = std::make_unique<Connection<T>>(); // TODO
-
 			// Try to reolsve host inot endpoints
 			asio::ip::tcp::resolver resolver(m_context);
-			m_endpoints = resolver.resolve(host, std::to_string(port));
+			asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(host, std::to_string(port));
+
+			// Connect in here
+			m_connection = std::make_unique<Connection<T>>(
+				Connection<T>::Owner::Client,
+				m_context,
+				asio::ip::tcp::socket(m_context),
+				m_qMessagesIn);
 
 			// Connect to server via Connection obj
-			m_connection->connectToServer(m_endpoints);
+			m_connection->connectToServer(endpoints);
 
 			// Start context in a thread
 			thread_context = std::thread([this]() {
@@ -43,7 +47,7 @@ public:
 
 	// Disconnect from server
 	void disconnect() {
-		if (isConnected) {
+		if (isConnected()) {
 			m_connection->disconnect();
 		}
 	}
@@ -55,6 +59,13 @@ public:
 	ThreadSafeQueue<OwnedMessage<T>>& getIncoming() {
 		return m_qMessagesIn;
 	}
+
+	// Send message to server
+	void send(const Message<T>& message) {
+		if (isConnected()) {
+			m_connection->send(message);
+		}
+	};
 
 protected:
 	// asio context for data transfer

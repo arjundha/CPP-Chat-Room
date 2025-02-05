@@ -16,14 +16,14 @@ struct Message {
 
 	size_t size() const {
 		return sizeof(MessageHeader<T>) + body.size();
-	}
+	};
 
 	// std::cout override
 	friend std::ostream& operator << (std::ostream& os, const Message<T>& message)
 	{
 		os << "Message ID:" << int(message.header.id) << " Size:" << message.header.size;
 		return os;
-	}
+	};
 
 	// Overloads for treating the body vector like a stack
 
@@ -42,7 +42,7 @@ struct Message {
 		message.header.size = message.size(); // now update the size in the header
 
 		return message;
-	}
+	};
 
 	// Pull data out of a message
 	template<typename DataType>
@@ -59,20 +59,23 @@ struct Message {
 		message.header.size = message.size();
 
 		return message;
-	}
+	};
 
 };
 
 template <typename T>
 class Connection;
 
+/*
+* These messages are associated with a connection.
+*/
 template <typename T>
 struct OwnedMessage {
 	std::shared_ptr<Connection<T>> remote = nullptr;
 	Message<T> message;
 
-	friend std::ostream& operator << (std::ostream& os, const OwnedMesage<T>& message) {
+	friend std::ostream& operator << (std::ostream& os, const OwnedMessage<T>& message) {
 		os << message.message;
 		return os;
-	}
+	};
 };

@@ -64,7 +64,7 @@ public:
 
 					m_deqConnections.back()->connectToClient(nIDCounter++);
 
-					std::cout << "[" << m_deqConnections.back()->getID() << "] Connected!!!\n";
+					std::cout << "[" << m_deqConnections.back()->getID() << "] Connected to the server\n";
 				}
 			}
 

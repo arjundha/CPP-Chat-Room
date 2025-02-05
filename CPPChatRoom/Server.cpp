@@ -45,6 +45,14 @@ protected:
 			client->send(message);
 		} break;
 
+		case CustomMessage::ServerMessage: {
+			std::cout << "[Server]: User " << client->getID() << " has disconnected.\n";
+
+			// Say bye bye
+			message << client->getID();
+			messageAllClients(message, client);
+		} break;
+
 		case CustomMessage::MessageWave: {
 			std::cout << "[" << client->getID() << "]: Message Wave\n";
 
@@ -58,7 +66,7 @@ protected:
 		case CustomMessage::MessageAll: {
 			std::cout << "[" << client->getID() << "]: Message All\n";
 
-			// Make a message and send to all clients
+			// Add client ID to message
 			message << client->getID();
 			messageAllClients(message, client);
 		} break;

@@ -31,16 +31,33 @@ struct Message {
 	template<typename DataType>
 	friend Message<T>& operator << (Message<T>& message, const DataType& data)
 	{
-		static_assert(std::is_standard_layout<DataType>::value, "Cannot push data into message vector, type is too complex");
+		if constexpr (std::is_same<DataType, std::string>::value) {
+			size_t size = message.body.size();  // Current size of message body
 
-		size_t size = message.body.size(); // current size
+			// Resize to accommodate the string data (not including null terminator)
+			message.body.resize(message.body.size() + data.size());
 
-		message.body.resize(message.body.size() + sizeof(DataType)); // resize for new data
+			// Copy the string's data into message.body
+			std::memcpy(message.body.data() + size, data.data(), data.size());
 
-		std::memcpy(message.body.data() + size, &data, sizeof(DataType)); // copy new data starting at end of old data
+			// Then store the string length
+			uint32_t length = static_cast<uint32_t>(data.size());
+			message << length; // Store length last (LIFO order)
 
-		message.header.size = message.size(); // now update the size in the header
 
+		}
+		else {
+			static_assert(std::is_standard_layout<DataType>::value, "Cannot push data into message vector, type is too complex");
+
+			size_t size = message.body.size(); // current size
+
+			message.body.resize(message.body.size() + sizeof(DataType)); // resize for new data
+
+			std::memcpy(message.body.data() + size, &data, sizeof(DataType)); // copy new data starting at end of old data
+		}
+
+		// Update header size to reflect body size
+		message.header.size = message.size();
 		return message;
 	};
 
@@ -48,16 +65,36 @@ struct Message {
 	template<typename DataType>
 	friend Message<T>& operator >> (Message<T>& message, DataType& data)
 	{
-		static_assert(std::is_standard_layout<DataType>::value, "Cannot pull data into message vector, type is too complex");
+		if constexpr (std::is_same<DataType, std::string>::value) {
+			// Extract string length (which was stored last)
+			uint32_t length;
+			message >> length; // Read string length first (LIFO order)
 
-		size_t size = message.body.size() - sizeof(DataType); // Size of data to be pulled out
+			// Ensure there is data in the message
+			if (message.body.empty()) {
+				throw std::runtime_error("Message body is empty, cannot extract string");
+			}
 
-		std::memcpy(&data, message.body.data() + size, sizeof(DataType)); // Copy the data out of message and into "data" var
+			// Compute starting index for the string (LIFO extraction)
+			size_t size = message.body.size() - length;
 
-		// Update sizes
-		message.body.resize(size);
+			// Extract string data
+			data.assign(message.body.begin() + size, message.body.end());
+
+			// Clear the extracted data
+			message.body.resize(size);
+		}
+		else {
+			static_assert(std::is_standard_layout<DataType>::value, "Cannot pull data into message vector, type is too complex");
+
+			size_t size = message.body.size() - sizeof(DataType); // Size of data to be pulled out
+
+			std::memcpy(&data, message.body.data() + size, sizeof(DataType)); // Copy the data out of message and into "data" var
+
+			// Update sizes
+			message.body.resize(size);
+		}
 		message.header.size = message.size();
-
 		return message;
 	};
 

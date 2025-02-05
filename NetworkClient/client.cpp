@@ -26,22 +26,18 @@ public:
 		send(message);
 	}
 
-	//void messageAll(std::string input) {
-	//	Message<CustomMessage> message;
-	//	message.header.id = CustomMessage::MessageAll;
-	//	message.body = std::vector<uint8_t>(input.begin(), input.end());
-	//	//std::vector<uint8_t> vec(input.begin(), input.end());
-	//	message.header.size += message.body.size();
-	//	std::cout << message.header.size << "\n";
-	//	send(message);
-	//}
+	void messageAll(std::string input) {
+		Message<CustomMessage> message;
+		message.header.id = CustomMessage::MessageAll;
+		message << input;
+		send(message);
+	}
 
-	//// TODO??
-	//void disconnect() {
-	//	Message<CustomMessage> message;
-	//	message.header.id = CustomMessage::ServerMessage;
-	//	send(message);
-	//}
+	void disconnect() {
+		Message<CustomMessage> message;
+		message.header.id = CustomMessage::ServerMessage;
+		send(message);
+	}
 
 };
 
@@ -54,7 +50,7 @@ int main() {
 	// Thread for user input
 	std::thread inputThread([&]() {
 		std::string input;
-		std::cout << "\nEnter command (1: Ping, 2: Wave, 3: Quit). Otherwise, type a message: \n";
+		std::cout << "\nQuick commands: (1: Ping, 2: Wave, 3: Quit). Otherwise, type a message: \n";
 		while (!bQuit) {
 			std::getline(std::cin, input);
 
@@ -68,10 +64,11 @@ int main() {
 			}
 
 			else if (input == "3") {
+				client.disconnect();
 				bQuit = true;
 			}
 			else {
-				//client.messageAll(input);
+				client.messageAll(input);
 			}
 		}
 		});
@@ -83,7 +80,7 @@ int main() {
 				switch (message.header.id) {
 				case CustomMessage::ServerAccept: {
 					// Server accepted			
-					std::cout << "Server accepted the connection\n";
+					std::cout << "Server accepted your connection. Start chatting!\n";
 				} break;
 
 				case CustomMessage::ServerPing: {
@@ -98,11 +95,11 @@ int main() {
 				} break;
 
 				case CustomMessage::MessageAll: {
-					//uint32_t clientID;
-					//message >> clientID;
-					//std::string output(message.body.begin(), message.body.end());
-					//std::cout << output << "\n";
-					//std::cout << "[" << clientID << "]: " << output << "\n";
+					uint32_t clientID;
+					std::string output;
+					message >> clientID;
+					message >> output;
+					std::cout << "[" << clientID << "]: " << output << "\n";
 				} break;
 
 				case CustomMessage::ServerMessage: {

@@ -28,6 +28,7 @@ public:
 	{
 		std::scoped_lock lock(mutex);
 		deqQueue.emplace_front(std::move(item)); // moves item into the front of the deqQueue, prevents making copies via "move"
+		cvBlocking.notify_one(); // wake up!
 	};
 
 	// Add an item to the back
@@ -35,6 +36,7 @@ public:
 	{
 		std::scoped_lock lock(mutex);
 		deqQueue.emplace_back(std::move(item));
+		cvBlocking.notify_one(); // wake up!
 	};
 
 	// Returns the size of the queue
@@ -74,8 +76,20 @@ public:
 		return item;
 	};
 
+	// Waits until server has something to do
+	void wait() {
+		// While the Queue is empty, lets put our thread to sleep 
+		while (empty()) {
+			std::unique_lock<std::mutex> uniqueLock(muxBlocking);
+			cvBlocking.wait(uniqueLock);
+		}
+	};
+
 
 protected:
 	std::mutex mutex;
 	std::deque<T> deqQueue;
+
+	std::condition_variable cvBlocking;
+	std::mutex muxBlocking;
 };

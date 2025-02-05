@@ -120,7 +120,10 @@ public:
 	};
 
 	// size_t is unsigned, so setting it to -1 actually sets it to highest value it can be
-	void update(size_t nMaxMessages = -1) {
+	void update(size_t nMaxMessages = -1, bool bShouldWait = false) {
+		if (bShouldWait) {
+			m_qMessagesIn.wait();
+		}
 		size_t nMessageCount = 0;
 		while (nMessageCount < nMaxMessages && !m_qMessagesIn.empty()) {
 			// get the first message

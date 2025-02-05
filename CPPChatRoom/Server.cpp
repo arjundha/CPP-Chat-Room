@@ -5,6 +5,7 @@ enum class CustomMessage : uint32_t {
 	ServerAccept,
 	ServerDeny,
 	ServerPing,
+	MessageWave,
 	MessageAll,
 	ServerMessage,
 };
@@ -17,45 +18,51 @@ public:
 
 protected:
 
-	virtual bool onClientConnect(std::shared_ptr<Connection<CustomMessage>> client)
-	{
-		//Message<CustomMessage> message;
-		//message.header.id = CustomMessage::ServerAccept;
-		//client->send(message);
+	virtual bool onClientConnect(std::shared_ptr<Connection<CustomMessage>> client) {
+		// TODO: notify everyone when someone joins
+		Message<CustomMessage> message;
+		message.header.id = CustomMessage::ServerAccept;
+		client->send(message);
 		return true;
 	};
 
-	virtual void onClientDisconnect(std::shared_ptr<Connection<CustomMessage>> client)
-	{
-		//std::cout << "Removing client with ID: " << client->getID() << "\n";
+	virtual void onClientDisconnect(std::shared_ptr<Connection<CustomMessage>> client) {
+		std::cout << "[Server] Removing client with ID: " << client->getID() << "\n";
+		// TODO: Notofy everyone when someone leaves
+		//Message<CustomMessage> message;
+		//message.header.id = CustomMessage::ServerMessage;
+		//message << client->getID();
+		//messageAllClients(message);
 	};
 
 	virtual void onMessage(std::shared_ptr<Connection<CustomMessage>> client, Message<CustomMessage>& message)
 	{
-		//switch (message.header.id)
-		//{
-		//case CustomMessage::ServerPing:
-		//{
-		//	std::cout << "[" << client->getID() << "]: Server Ping\n";
+		switch (message.header.id) {
+		case CustomMessage::ServerPing: {
+			std::cout << "[" << client->getID() << "]: Server Ping\n";
 
-		//	// Simply bounce message back to client
-		//	client->send(message);
-		//}
-		//break;
+			// Bounce back to client
+			client->send(message);
+		} break;
 
-		//case CustomMessage::MessageAll:
-		//{
-		//	std::cout << "[" << client->getID() << "]: Message All\n";
+		case CustomMessage::MessageWave: {
+			std::cout << "[" << client->getID() << "]: Message Wave\n";
 
-		//	// Construct a new message and send it to all clients
-		//	Message<CustomMessage> message;
-		//	message.header.id = CustomMessage::ServerMessage;
-		//	message << client->getID();
-		//	messageAllClients(message, client);
+			// Make a message and send to all clients
+			Message<CustomMessage> message;
+			message.header.id = CustomMessage::MessageWave;
+			message << client->getID();
+			messageAllClients(message, client);
+		} break;
 
-		//}
-		//break;
-		//}
+		case CustomMessage::MessageAll: {
+			std::cout << "[" << client->getID() << "]: Message All\n";
+
+			// Make a message and send to all clients
+			message << client->getID();
+			messageAllClients(message, client);
+		} break;
+		}
 	};
 };
 

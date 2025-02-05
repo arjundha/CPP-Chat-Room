@@ -80,8 +80,8 @@ private:
 		asio::async_read(m_socket, asio::buffer(&m_temporaryIncomingMessage.header, sizeof(MessageHeader<T>)), [this](std::error_code error, std::size_t size) {
 			if (!error) {
 				// Does the message have a body? If yes then we are going to allocate space for the body and prime asio to read it
-				if (m_temporaryIncomingMessage.header.size > 0) {
-					m_temporaryIncomingMessage.body.resize(m_temporaryIncomingMessage.header.size);
+				if (m_temporaryIncomingMessage.header.size > 8) {
+					m_temporaryIncomingMessage.body.resize(m_temporaryIncomingMessage.header.size - 8);
 					readBody();
 				}
 				else {

@@ -24,10 +24,10 @@ public:
 				});
 		}
 		catch (std::exception& e) {
-			std::cerr << "Exception in networkServer: " << e.what() << "\n";
+			std::cerr << "[Server] [ERROR] Exception in networkServer: " << e.what() << "\n";
 			return false;
 		}
-		std::cout << "Server Started!\n";
+		std::cout << "[Server] Server Started!\n";
 		return true;
 	};
 
@@ -36,17 +36,17 @@ public:
 		if (m_threadContext.joinable()) {
 			m_threadContext.join();
 		}
-		std::cout << "Server stopped\n";
+		std::cout << "[Server] Server stopped\n";
 	};
 
 	// async function
 	void waitForClientConnection() {
 		m_asioAcceptor.async_accept([this](std::error_code error, asio::ip::tcp::socket socket) {
 			if (error) {
-				std::cout << "Server encounterd new connection error: " << error.message() << "\n";
+				std::cout << "[Server] [ERROR] Server encounterd new connection error: " << error.message() << "\n";
 			}
 			else {
-				std::cout << "Server establised new connection at remote endpoint: " << socket.remote_endpoint() << "\n";
+				std::cout << "[Server] Server establised new connection at remote endpoint: " << socket.remote_endpoint() << "\n";
 
 				// Make a connection to handle the new client that wants to connect
 				// We tell this connection that it is owned by a server
@@ -55,7 +55,7 @@ public:
 				// Give the user server a chance to deny connection
 				if (!onClientConnect(new_connection))
 				{
-					std::cout << "Connection denied -- Client could not connect\n";
+					std::cout << "[Server] Connection denied -- Client could not connect\n";
 				}
 				else
 				{

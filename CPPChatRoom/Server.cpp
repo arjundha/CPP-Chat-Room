@@ -75,7 +75,7 @@ protected:
 };
 
 int main() {
-	CustomServer server(60000);
+	CustomServer server(60000); // Port number
 	server.start();
 	while (1) {
 		server.update(-1, true);

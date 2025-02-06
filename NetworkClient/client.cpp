@@ -43,7 +43,7 @@ public:
 
 int main() {
 	CustomClient client;
-	client.connect("127.0.0.1", 60000);
+	client.connect("127.0.0.1", 60000);  // For local testing, you'll need to change this if you want to connect to people online.
 
 	bool bQuit = false;
 
